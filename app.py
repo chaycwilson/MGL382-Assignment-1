@@ -4,14 +4,6 @@ from dash.dependencies import Input, Output
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier  # Use classifier for categorical target
 
-from flask import Flask
-from flask import Flask
-from dash import Dash
-import dash_core_components as dcc
-import dash_html_components as html
-server = Flask(__name__)
-app = Dash(__name__, server=server, url_base_pathname='/dashboard/')
-
 # Load and prepare the data
 data = {
     'Gender': ['Male', 'Male', 'Female', 'Male', 'Male'],
@@ -34,7 +26,6 @@ model.fit(X, y)
 
 # Initialize the Dash app
 app = dash.Dash(__name__)
-server = app.server
 
 # Define the layout
 app.layout = html.Div([

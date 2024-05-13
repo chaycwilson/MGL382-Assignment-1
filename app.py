@@ -3,9 +3,14 @@ from dash import dcc, html
 from dash.dependencies import Input, Output
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier  # Use classifier for categorical target
+
 from flask import Flask
+from flask import Flask
+from dash import Dash
+import dash_core_components as dcc
+import dash_html_components as html
 server = Flask(__name__)
-app = dash.Dash(__name__, server=server)
+app = Dash(__name__, server=server, url_base_pathname='/dashboard/')
 
 # Load and prepare the data
 data = {

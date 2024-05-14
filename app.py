@@ -12,19 +12,21 @@ data = {
     'Education': ['Graduate', 'Graduate', 'Not Graduate', 'Graduate', 'Graduate'],
     'Self_Employed': ['No', 'No', 'Yes', 'No', 'No'],
     'ApplicantIncome': [5849, 4583, 3000, 2583, 6000],
+    'LoanAmount': [100, 150, 180, 140, 155],
+    'Credit_History': ['Good', 'Bad', 'Good', 'Bad', 'Good'],
+    'Area': ['Urban', 'Rural', 'Urban', 'Rural', 'Urban'],
     'Loan_Status': ['Y', 'N', 'N', 'N', 'Y']
 }
 df = pd.DataFrame(data)
 
 # Feature Engineering
-X = pd.get_dummies(df[['Gender', 'Married', 'Dependents', 'Education', 'Self_Employed', 'ApplicantIncome']], drop_first=True)
+X = pd.get_dummies(df[['Gender', 'Married', 'Dependents', 'Education', 'Self_Employed', 'ApplicantIncome', 'LoanAmount', 'Credit_History', 'Area']], drop_first=True)
 y = df['Loan_Status'].map({'Y': 1, 'N': 0})
 
 # Model Training
 model = RandomForestClassifier()
 model.fit(X, y)
 
-# Dash App Initialization
 # Dash App Initialization
 app = dash.Dash(__name__)
 
@@ -81,6 +83,12 @@ app.layout = html.Div(style=styles['container'], children=[
     dcc.Input(id='self_employed', type='text', style=styles['input']),
     html.Label("Applicant Income (Numeric):", style=styles['label']),
     dcc.Input(id='applicant_income', type='number', style=styles['input']),
+    html.Label("Loan Amount (Numeric):", style=styles['label']),
+    dcc.Input(id='loan_amount', type='number', style=styles['input']),
+    html.Label("Credit History (Good or Bad):", style=styles['label']),
+    dcc.Input(id='credit_history', type='text', style=styles['input']),
+    html.Label("Area (Urban or Rural):", style=styles['label']),
+    dcc.Input(id='area', type='text', style=styles['input']),
     html.Button('Predict', id='submit-val', n_clicks=0, style=styles['button']),
     html.Div(id='output-prediction', style=styles['output'])
 ])
@@ -95,9 +103,12 @@ app.layout = html.Div(style=styles['container'], children=[
         dash.dependencies.State('dependents', 'value'),
         dash.dependencies.State('education', 'value'),
         dash.dependencies.State('self_employed', 'value'),
-        dash.dependencies.State('applicant_income', 'value')
+        dash.dependencies.State('applicant_income', 'value'),
+        dash.dependencies.State('loan_amount', 'value'),
+        dash.dependencies.State('credit_history', 'value'),
+        dash.dependencies.State('area', 'value')
     ])
-def update_output(n_clicks, gender, married, dependents, education, self_employed, applicant_income):
+def update_output(n_clicks, gender, married, dependents, education, self_employed, applicant_income, loan_amount, credit_history, area):
     try:
         input_df = pd.DataFrame({
             'Gender': [gender],
@@ -105,13 +116,16 @@ def update_output(n_clicks, gender, married, dependents, education, self_employe
             'Dependents': [int(dependents)],
             'Education': [education],
             'Self_Employed': [self_employed],
-            'ApplicantIncome': [int(applicant_income)]
+            'ApplicantIncome': [int(applicant_income)],
+            'LoanAmount': [int(loan_amount)],
+            'Credit_History': [credit_history],
+            'Area': [area]
         })
 
         # Handling categorical variables
         input_df = pd.get_dummies(input_df)
-        expected_columns = ['Dependents', 'ApplicantIncome', 'Gender_Male', 'Married_Yes', 
-                            'Education_Not Graduate', 'Self_Employed_Yes']
+        expected_columns = ['Dependents', 'ApplicantIncome', 'LoanAmount', 'Gender_Male', 'Married_Yes', 
+                            'Education_Not Graduate', 'Self_Employed_Yes', 'Credit_History_Good', 'Area_Urban']
         
         # Ensuring all required dummy variables are present
         missing_cols = set(expected_columns) - set(input_df.columns)
@@ -125,9 +139,7 @@ def update_output(n_clicks, gender, married, dependents, education, self_employe
         return f"The loan status is {status}"
     except Exception as e:
         return f"An error occurred: {str(e)}"
-        
 
 # Run the application
 if __name__ == '__main__':
     app.run_server(debug=True)
-

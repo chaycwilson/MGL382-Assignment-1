@@ -1,5 +1,4 @@
 dash==2.6.0
-flask
 pandas
 numpy
 scikit-learn

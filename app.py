@@ -40,7 +40,8 @@ styles = {
         'background-color': '#f9f9f9'
     },
     'label': {
-        'margin': '10px 0 5px'
+        'margin': '10px 0 5px',
+        'font-family': 'Arial, sans-serif'
     },
     'input': {
         'width': '100%',
